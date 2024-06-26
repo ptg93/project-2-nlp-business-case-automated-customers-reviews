@@ -53,6 +53,7 @@
             background: #555;
         }
     </style>
+    <script type='text/javascript' src='https://public.tableau.com/javascripts/api/tableau-2.min.js'></script>
 </head>
 <body>
 
@@ -115,8 +116,12 @@
                     <p>Summary: This is an example summary for ${params.category} with rating ${params.rating}. Replace this with actual summary from the xls file.</p>`;
                 
                 // Tableau Word Cloud Visualization
-                var vizUrlWordCloud = 'URL_TO_WORD_CLOUD_VISUALIZATION'; // Replace with actual URL
-                var vizWordCloud = new tableau.Viz(document.getElementById('vizContainerWordCloud'), vizUrlWordCloud);
+                var vizUrlWordCloud = 'https://prod-uk-a.online.tableau.com/t/nataliyademyanenkoe28ad50cc7/authoring/WordClouds/Sheet1#2';
+                var optionsWordCloud = {
+                    Category: params.category,
+                    Rating: params.rating
+                };
+                var vizWordCloud = new tableau.Viz(document.getElementById('vizContainerWordCloud'), vizUrlWordCloud, optionsWordCloud);
 
                 // Tableau Histogram Visualization
                 var vizUrlHistogram = 'URL_TO_YOUR_HISTOGRAM_VISUALIZATION'; // Replace with actual URL
@@ -127,14 +132,7 @@
                 var reviewText = params.review;
                 var result = ''; // Your classification result
 
-                // For example purposes, classify based on length
-                if (reviewText.length < 50) {
-                    result = 'negative';
-                } else if (reviewText.length < 100) {
-                    result = 'neutral';
-                } else {
-                    result = 'positive';
-                }
+                // Here should be classification
 
                 resultsTitle.innerText = 'Review Classification Result';
                 resultsContent.innerHTML = `
