@@ -37,6 +37,10 @@ select, textarea, button {
     border: 1px solid #ccc;
 }
 
+textarea {
+    height: 150px; /* Adjusted height for longer text */
+}
+
 button {
     background-color: #007bff;
     color: white;
