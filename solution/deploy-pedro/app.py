@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, jsonify
 import pandas as pd
-import tensorflow as tf
 from transformers import pipeline, RobertaTokenizer, TFRobertaForSequenceClassification
+import tensorflow as tf
 
 app = Flask(__name__)
 
@@ -9,9 +9,6 @@ app = Flask(__name__)
 model_path = "model/1"
 model = TFRobertaForSequenceClassification.from_pretrained(model_path, local_files_only=True)
 tokenizer = RobertaTokenizer.from_pretrained(model_path, local_files_only=True)
-
-# Load the summarization pipeline
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 # Load the reviews CSV
 data_df = pd.read_csv('data/data.csv')
