@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Amazon Reviews Analysis</h1>
+    <form action="/summarize" method="post">
+        <label for="category">Product Category:</label>
+        <select name="category" id="category">
+            <option value="Electronics">Electronics</option>
+            <option value="Books">Books</option>
+            <!-- Add other categories as needed -->
+        </select>
+        <label for="rating">Star Rating:</label>
+        <select name="rating" id="rating">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+        <button type="submit">View Summary</button>
+    </form>
+    <form action="/classify" method="post">
+        <label for="text">Enter text to classify:</label>
+        <textarea name="text" id="text"></textarea>
+        <button type="submit">Classify Text</button>
+    </form>
+</body>
+</html>
