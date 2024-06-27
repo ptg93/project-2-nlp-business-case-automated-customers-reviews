@@ -1,16 +1,7 @@
 from flask import Flask, request, render_template, jsonify
 import pandas as pd
-import tensorflow as tf  # Import TensorFlow
 from transformers import pipeline, RobertaTokenizer, TFRobertaForSequenceClassification
-
-app = Flask(__name__)
-
-# Load the sentiment analysis model
-model_path = "model/1"
-from flask import Flask, request, render_template, jsonify
-import pandas as pd
-import tensorflow as tf  # Import TensorFlow
-from transformers import pipeline, RobertaTokenizer, TFRobertaForSequenceClassification
+import tensorflow as tf
 
 app = Flask(__name__)
 
@@ -18,9 +9,6 @@ app = Flask(__name__)
 model_path = "model/1"
 model = TFRobertaForSequenceClassification.from_pretrained(model_path, local_files_only=True)
 tokenizer = RobertaTokenizer.from_pretrained(model_path, local_files_only=True)
-
-# Load the summarization pipeline
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 # Load the reviews CSV
 data_df = pd.read_csv('data/data.csv')
@@ -36,13 +24,20 @@ def summarize():
     rating = request.form.get('rating')
     print(f"Received category: {category}, rating: {rating}")
     print("Columns in summarized_reviews_df:", summarized_reviews_df.columns)
-    filtered_reviews = summarized_reviews_df[(summarized_reviews_df['primaryCategories'] == category) & (summarized_reviews_df['reviews.rating'] == int(rating))]
+    
+    # Filter the DataFrame based on the selected category and rating
+    filtered_reviews = summarized_reviews_df[
+        (summarized_reviews_df['primaryCategories'] == category) & 
+        (summarized_reviews_df['reviews.rating'] == int(rating))
+    ]
 
     if filtered_reviews.empty:
         return jsonify({"summary": f"No {rating} star reviews for category {category}"})
 
-    summarized_text = " ".join(filtered_reviews['summary'].tolist())
-    return jsonify({"summary": summarized_text})
+    # Get the summary from the filtered reviews
+    summary = " ".join(filtered_reviews['summary'].tolist())
+    
+    return jsonify({"summary": summary})
 
 @app.route('/classify', methods=['POST'])
 def classify():
