@@ -1,16 +1,16 @@
 from flask import Flask, request, render_template, jsonify
 import pandas as pd
 import tensorflow as tf
-from transformers import pipeline
+from transformers import pipeline, DistilBertTokenizer, TFDistilBertForSequenceClassification
 
 app = Flask(__name__)
 
 # Load the sentiment analysis model
 model_path = "model/1"  # Adjust the path to your model
-model = tf.keras.models.load_model(model_path)
-tokenizer = tf.keras.preprocessing.text.Tokenizer()
+model = TFDistilBertForSequenceClassification.from_pretrained(model_path)
+tokenizer = DistilBertTokenizer.from_pretrained(model_path)
 
-# Load the summarization pipeline (e.g., BART)
+# Load the summarization pipeline
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 # Load the reviews CSV
@@ -42,10 +42,9 @@ def classify():
         return jsonify({"error": "No text provided"})
 
     # Tokenize and classify text
-    tokens = tokenizer.texts_to_sequences([text])
-    padded_tokens = tf.keras.preprocessing.sequence.pad_sequences(tokens, maxlen=128)
-    prediction = model.predict(padded_tokens)
-    sentiment = 'positive' if prediction > 0.5 else 'negative' if prediction < 0.5 else 'neutral'
+    inputs = tokenizer(text, return_tensors="tf", padding=True, truncation=True, max_length=128)
+    prediction = model(inputs)[0]
+    sentiment = 'positive' if tf.argmax(prediction, axis=1).numpy()[0] == 1 else 'negative' if tf.argmax(prediction, axis=1).numpy()[0] == 0 else 'neutral'
 
     return jsonify({"sentiment": sentiment})
 
