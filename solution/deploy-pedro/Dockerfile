@@ -1,5 +1,4 @@
 # Use the official lightweight Python image.
-# https://hub.docker.com/_/python
 FROM python:3.8-slim
 
 # Set environment variables to prevent Python from writing out pyc files and

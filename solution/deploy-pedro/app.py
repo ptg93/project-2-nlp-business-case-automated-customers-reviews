@@ -1,20 +1,20 @@
 from flask import Flask, request, render_template, jsonify
 import pandas as pd
-import tensorflow as tf
-from transformers import pipeline, DistilBertTokenizer, TFDistilBertForSequenceClassification
+from transformers import pipeline, RobertaTokenizer, TFRobertaForSequenceClassification
 
 app = Flask(__name__)
 
 # Load the sentiment analysis model
-model_path = "model/1"  # Adjust the path to your model
-model = TFDistilBertForSequenceClassification.from_pretrained(model_path)
-tokenizer = DistilBertTokenizer.from_pretrained(model_path)
+model_path = "model/1"
+model = TFRobertaForSequenceClassification.from_pretrained(model_path, local_files_only=True)
+tokenizer = RobertaTokenizer.from_pretrained(model_path, local_files_only=True)
 
 # Load the summarization pipeline
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 # Load the reviews CSV
-reviews_df = pd.read_csv('data/reviews.csv')
+data_df = pd.read_csv('data/data.csv')
+summarized_reviews_df = pd.read_csv('data/summarized_reviews.csv')
 
 @app.route('/')
 def index():
@@ -24,15 +24,13 @@ def index():
 def summarize():
     category = request.form['category']
     rating = request.form['rating']
-    filtered_reviews = reviews_df[(reviews_df['category'] == category) & (reviews_df['rating'] == int(rating))]
+    filtered_reviews = summarized_reviews_df[(summarized_reviews_df['category'] == category) & (summarized_reviews_df['rating'] == int(rating))]
 
     if filtered_reviews.empty:
         return jsonify({"summary": f"No {rating} star reviews for category {category}"})
 
-    # Summarize the reviews
-    texts = filtered_reviews['review_text'].tolist()
-    summaries = summarizer(texts, max_length=50, min_length=25, do_sample=False)
-    summarized_text = " ".join([summary['summary_text'] for summary in summaries])
+    # Return the pre-summarized reviews
+    summarized_text = " ".join(filtered_reviews['summary'].tolist())
     return jsonify({"summary": summarized_text})
 
 @app.route('/classify', methods=['POST'])
