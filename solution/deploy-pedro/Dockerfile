@@ -1,10 +1,26 @@
+# Use the official lightweight Python image.
 FROM python:3.8-slim
 
+# Set environment variables to prevent Python from writing out pyc files and
+# to prevent Python from buffering stdout and stderr.
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Set the working directory to /app
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-COPY . .
+# Copy the data directory
+COPY data /app/data
 
-CMD ["sh", "start.sh"]
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+
