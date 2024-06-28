@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 800px;
     margin: auto;
     background: white;
     padding: 20px;
@@ -55,4 +55,10 @@ button:hover {
 #summary-result, #sentiment-result {
     margin-top: 20px;
     font-size: 16px;
+}
+
+.tableauPlaceholder {
+    width: 100%;
+    height: 500px; /* Adjust the height as needed */
+    margin-top: 20px;
 }
